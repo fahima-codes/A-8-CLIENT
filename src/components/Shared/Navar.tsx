@@ -27,7 +27,7 @@ export default function Navbar() {
   const [profileOpen, setProfileOpen] = useState(false);
 
   // TODO: Replace with your NextAuth session
-  const isAuthenticated = false; // true korle authenticated view dekhte parba
+  const isAuthenticated = true; // test korar jonno true korlam
   const user = {
     name: 'Rahim Ahmed',
     email: 'rahim@test.com',
@@ -55,7 +55,9 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`relative text-sm font-medium transition ${active ? 'text-black' : 'text-zinc-500 hover:text-black'}`}
+                className={`relative text-sm font-medium transition ${
+                  active ? 'text-black' : 'text-zinc-500 hover:text-black'
+                }`}
               >
                 {link.name}
                 {active && (
@@ -92,6 +94,8 @@ export default function Navbar() {
                 <Image
                   src={user.image}
                   alt="avatar"
+                  width={36}
+                  height={36}
                   className="h-9 w-9 rounded-full object-cover ring-2 ring-zinc-200"
                 />
               </button>
@@ -109,20 +113,21 @@ export default function Navbar() {
                   >
                     <LayoutDashboard size={16} /> Dashboard
                   </Link>
+                  {/* FIXED LINK HERE */}
                   <Link
-                    href="/dashboard/add-studio"
+                    href="/add-studio"
                     className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm hover:bg-zinc-100"
                   >
                     <Plus size={16} /> Add New Studio
                   </Link>
                   <Link
-                    href="/dashboard/my-listings"
+                    href="/my-listings"
                     className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm hover:bg-zinc-100"
                   >
                     <List size={16} /> My Studio Listings
                   </Link>
                   <Link
-                    href="/dashboard/my-bookings"
+                    href="/my-bookings"
                     className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm hover:bg-zinc-100"
                   >
                     <CalendarCheck size={16} /> My Bookings
@@ -154,7 +159,13 @@ export default function Navbar() {
                 {l.name}
               </Link>
             ))}
-            {!isAuthenticated && (
+            {isAuthenticated ? (
+              <>
+                <Link href="/add-studio">Add New Studio</Link>
+                <Link href="/my-listings">My Listings</Link>
+                <Link href="/my-bookings">My Bookings</Link>
+              </>
+            ) : (
               <>
                 <Link href="/login">Login</Link>
                 <Link

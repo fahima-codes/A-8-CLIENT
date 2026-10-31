@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Manrope, Inter } from 'next/font/google';
+import Navbar from '@/components/Shared/Navar';
+import Footer from '@/components/Shared/Footer';
 
 const manrope = Manrope({ subsets: ['latin'], weight: ['600', '700'] });
 const inter = Inter({ subsets: ['latin'] });
@@ -24,7 +26,16 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="en" className={`${manrope.className} ${inter.className}`}>
-      <body>{children}</body>
+      <body className="flex min-h-screen flex-col bg-white antialiased">
+        {/* Navbar - Sob page e fixed thakbe */}
+        <Navbar />
+
+        {/* Sob page er content */}
+        <main className="flex-1">{children}</main>
+
+        {/* Footer - Sob page e fixed thakbe */}
+        <Footer />
+      </body>
     </html>
   );
 }
