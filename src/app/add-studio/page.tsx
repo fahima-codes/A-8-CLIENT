@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
@@ -20,28 +20,30 @@ export default function AddStudioPage() {
     'Art Studio',
   ];
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-    const form = e.target;
+
+    const form = e.currentTarget;
+    const data = new FormData(form);
 
     const studioData = {
-      title: form.title.value,
-      category: form.category.value,
-      hourlyRate: Number(form.hourlyRate.value),
-      deposit: Number(form.deposit.value),
-      maxCapacity: Number(form.capacity.value),
-      location: form.location.value,
-      image: form.image.value,
-      amenities: amenities,
-      overview: form.overview.value,
+      title: String(data.get('title') ?? ''),
+      category: String(data.get('category') ?? ''),
+      hourlyRate: Number(data.get('hourlyRate')),
+      deposit: Number(data.get('deposit') || 0),
+      maxCapacity: Number(data.get('capacity')),
+      location: String(data.get('location') ?? ''),
+      image: String(data.get('image') ?? ''),
+      amenities,
+      overview: String(data.get('overview') ?? ''),
       hostName: user.name,
       hostEmail: user.email,
       createdAt: new Date(),
     };
+    console.log(studioData);
 
     // API call to MongoDB
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/add-studio`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(studioData),
