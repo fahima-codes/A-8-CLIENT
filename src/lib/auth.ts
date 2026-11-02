@@ -1,5 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
+import { jwt } from 'better-auth/plugins';
 import { MongoClient } from 'mongodb';
 
 if (!process.env.MONGODB_URL) throw new Error('MONGODB_URL missing');
@@ -17,7 +18,7 @@ export const auth = betterAuth({
     maxPasswordLength: 100,
     requireEmailVerification: false,
   },
-  // Google thakle cholbe, na thakle skip korbe - crash korbe na
+
   ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
     ? {
         socialProviders: {
@@ -28,5 +29,14 @@ export const auth = betterAuth({
         },
       }
     : {}),
+
   secret: process.env.BETTER_AUTH_SECRET,
+  plugins: [jwt()],
+  session: {
+    cookieCache: {
+      enabled: true,
+      strategy: 'jwt',
+      maxAge: 7 * 24 * 60 * 60, // 7 days
+    },
+  },
 });

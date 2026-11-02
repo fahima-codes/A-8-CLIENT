@@ -37,7 +37,12 @@ const StudioDetailsPage = async ({ params }: Props) => {
 
   try {
     // THIK KORA FETCH
-    const res = await fetch(`${API_URL}/studios/${id}`, { cache: 'no-store' });
+    const res = await fetch(`${API_URL}/studios/${id}`, {
+      headers: {
+        authorization: 'user logged in',
+      },
+    });
+
     if (res.ok) {
       studio = await res.json();
     }
