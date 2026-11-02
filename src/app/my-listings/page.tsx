@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { authClient } from '@/lib/auth-client';
+import RequireAuth from '@/components/Shared/RequireAuth';
 
 type Studio = {
   _id: string;
@@ -15,29 +17,45 @@ type Studio = {
   ownerEmail?: string;
 };
 
-const USER_EMAIL = 'rahim@test.com';
-
 export default function MyListingsPage() {
+  return (
+    <RequireAuth>
+      <MyListingsContent />
+    </RequireAuth>
+  );
+}
+
+function MyListingsContent() {
+  const { data: session } = authClient.useSession();
+  const userEmail = session?.user?.email;
+  const userName = session?.user?.name;
+
   const [studios, setStudios] = useState<Studio[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<Studio | null>(null);
 
   useEffect(() => {
     async function fetchMyStudios() {
+      if (!userEmail) return;
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`, {
-          cache: 'no-store',
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/studios?email=${userEmail}`,
+          {
+            cache: 'no-store',
+          },
+        );
 
         if (!res.ok) throw new Error('Could not load studios');
 
         const data = await res.json();
         const list: Studio[] = Array.isArray(data) ? data : data.data ?? [];
 
+        // API filter fail korle client-side fallback
         setStudios(
           list.filter(
             studio =>
               (studio.hostEmail ?? studio.ownerEmail)?.toLowerCase() ===
-              USER_EMAIL.toLowerCase(),
+              userEmail.toLowerCase(),
           ),
         );
       } catch (error) {
@@ -49,10 +67,11 @@ export default function MyListingsPage() {
     }
 
     fetchMyStudios();
-  }, []);
+  }, [userEmail]);
 
-  async function handleDelete(id: string) {
-    if (!window.confirm('Are you sure you want to delete this studio?')) return;
+  async function handleDeleteConfirmed() {
+    if (!deleteTarget) return;
+    const id = deleteTarget._id;
 
     try {
       const res = await fetch(
@@ -67,6 +86,8 @@ export default function MyListingsPage() {
     } catch (error) {
       console.error(error);
       toast.error('Could not delete studio');
+    } finally {
+      setDeleteTarget(null);
     }
   }
 
@@ -98,7 +119,6 @@ export default function MyListingsPage() {
               Manage your creative spaces · {studios.length} found
             </p>
           </div>
-
           <Link
             href="/add-studio"
             className="rounded-full bg-zinc-950 px-6 py-3 text-sm font-bold text-white"
@@ -112,7 +132,8 @@ export default function MyListingsPage() {
             <div className="text-4xl">🎬</div>
             <h2 className="mt-4 text-xl font-bold">No studios found</h2>
             <p className="mt-2 text-sm text-zinc-500">
-              Add a studio using the email {USER_EMAIL}.
+              Add a studio with your account{userName ? ` (${userName})` : ''} to
+              see it here.
             </p>
             <Link
               href="/add-studio"
@@ -160,7 +181,7 @@ export default function MyListingsPage() {
                       Update
                     </Link>
                     <button
-                      onClick={() => handleDelete(studio._id)}
+                      onClick={() => setDeleteTarget(studio)}
                       className="flex-1 rounded-full bg-red-50 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100"
                     >
                       Delete
@@ -172,6 +193,44 @@ export default function MyListingsPage() {
           </div>
         )}
       </div>
+
+      {/* Custom delete confirmation modal (NOT window.confirm) */}
+      {deleteTarget && (
+        <div
+          className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-5"
+          onClick={e => e.target === e.currentTarget && setDeleteTarget(null)}
+        >
+          <div className="w-full max-w-sm rounded-3xl bg-white p-6 text-center dark:bg-zinc-900">
+            {/* preview */}
+            <img
+              src={deleteTarget.image}
+              alt={deleteTarget.title}
+              className="mx-auto h-24 w-36 rounded-2xl object-cover"
+            />
+            <h3 className="mt-4 text-lg font-black dark:text-white">
+              Delete “{deleteTarget.title}”?
+            </h3>
+            <p className="mt-2 text-sm text-zinc-500">
+              This will permanently remove the listing from StudioSpace. This
+              action cannot be undone.
+            </p>
+            <div className="mt-6 flex gap-2">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="flex-1 rounded-full border border-zinc-300 py-3 font-bold transition hover:bg-zinc-100 dark:border-zinc-700 dark:text-white dark:hover:bg-zinc-800"
+              >
+                Keep it
+              </button>
+              <button
+                onClick={handleDeleteConfirmed}
+                className="flex-1 rounded-full bg-red-600 py-3 font-bold text-white transition hover:bg-red-700"
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

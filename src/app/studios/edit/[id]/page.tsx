@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import RequireAuth from '@/components/Shared/RequireAuth';
 
 type Studio = {
   _id: string;
@@ -17,6 +18,14 @@ type Studio = {
 };
 
 export default function EditStudioPage() {
+  return (
+    <RequireAuth>
+      <EditStudioContent />
+    </RequireAuth>
+  );
+}
+
+function EditStudioContent() {
   const { id } = useParams();
   const router = useRouter();
   const [studio, setStudio] = useState<Studio | null>(null);

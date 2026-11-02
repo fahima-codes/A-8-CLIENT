@@ -2,10 +2,19 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { authClient } from '@/lib/auth-client';
+import RequireAuth from '@/components/Shared/RequireAuth';
 
 export default function DashboardPage() {
+  return (
+    <RequireAuth>
+      <DashboardContent />
+    </RequireAuth>
+  );
+}
+
+function DashboardContent() {
   const { data: session } = authClient.useSession();
-  const user = session?.user as any;
+  const user = session?.user;
   const [stats, setStats] = useState({
     listings: 0,
     bookings: 0,
@@ -23,13 +32,13 @@ export default function DashboardPage() {
           fetch(`${API}/bookings?email=${user.email}`),
         ]);
         const listings = await listingsRes.json();
-        const bookings = await bookingsRes.json();
+        const bookings: { status?: string }[] = await bookingsRes.json();
         setStats({
           listings: Array.isArray(listings) ? listings.length : 0,
           bookings: Array.isArray(bookings) ? bookings.length : 0,
           earnings: Array.isArray(bookings) ? bookings.length * 50 : 0,
           pending: Array.isArray(bookings)
-            ? bookings.filter((b: any) => b.status === 'Pending').length
+            ? bookings.filter(b => b.status === 'Pending').length
             : 0,
         });
       } catch (e) {

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { authClient } from '@/lib/auth-client';
+import RequireAuth from '@/components/Shared/RequireAuth';
 
 type Booking = {
   _id: string;
@@ -17,6 +18,14 @@ type Booking = {
 };
 
 export default function MyBookingsPage() {
+  return (
+    <RequireAuth>
+      <MyBookingsContent />
+    </RequireAuth>
+  );
+}
+
+function MyBookingsContent() {
   const { data: session } = authClient.useSession();
   const user = session?.user;
   const [bookings, setBookings] = useState<Booking[]>([]);

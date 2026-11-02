@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { MapPin, Search, SlidersHorizontal, Star } from 'lucide-react';
 
 type Studio = {
@@ -16,10 +17,31 @@ type Studio = {
 };
 
 export default function AllStudioPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="grid min-h-[60vh] place-items-center bg-[#f7f7f5]">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-zinc-200 border-t-black" />
+        </main>
+      }
+    >
+      <StudiosContent />
+    </Suspense>
+  );
+}
+
+function StudiosContent() {
+  const searchParams = useSearchParams();
+  const initialCategory = searchParams.get('category') ?? 'All spaces';
+
   const [studios, setStudios] = useState<Studio[]>([]);
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('All spaces');
+  const [categoryOverride, setCategoryOverride] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Derived: query param geeki প্রেi..(kategori) chip click override
+  const category = categoryOverride ?? initialCategory;
+  const setCategory = setCategoryOverride;
 
   useEffect(() => {
     async function loadStudios() {

@@ -4,6 +4,8 @@ import './globals.css';
 import { Manrope, Inter } from 'next/font/google';
 import Navbar from '@/components/Shared/Navar';
 import Footer from '@/components/Shared/Footer';
+import Providers from '@/components/Shared/Providers';
+import { Toaster } from '@/components/ui/sonner';
 
 const manrope = Manrope({ subsets: ['latin'], weight: ['600', '700'] });
 const inter = Inter({ subsets: ['latin'] });
@@ -25,16 +27,25 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" className={`${manrope.className} ${inter.className}`}>
-      <body className="flex min-h-screen flex-col bg-white antialiased">
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${manrope.className} ${inter.className}`}
+    >
+      <body className="flex min-h-screen flex-col bg-background text-foreground antialiased">
         {/* Navbar - Sob page e fixed thakbe */}
-        <Navbar />
+        <Providers>
+          <Navbar />
 
-        {/* Sob page er content */}
-        <main className="flex-1">{children}</main>
+          {/* Sob page er content */}
+          <main className="flex-1">{children}</main>
 
-        {/* Footer - Sob page e fixed thakbe */}
-        <Footer />
+          {/* Footer - Sob page e fixed thakbe */}
+          <Footer />
+
+          {/* Global toast notifications */}
+          <Toaster position="top-center" richColors />
+        </Providers>
       </body>
     </html>
   );
