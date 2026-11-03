@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { authClient } from '@/lib/auth-client';
+import { getAuthToken } from '@/lib/getTokenFromServer';
 import RequireAuth from '@/components/Shared/RequireAuth';
 
 type Studio = {
@@ -74,9 +75,22 @@ function MyListingsContent() {
     const id = deleteTarget._id;
 
     try {
+      const token = await getAuthToken();
+
+      if (!token) {
+        toast.error('Could not get your login token. Please sign in again.');
+        setDeleteTarget(null);
+        return;
+      }
+
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/studios/${id}`,
-        { method: 'DELETE' },
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
 
       if (!res.ok) throw new Error('Delete failed');

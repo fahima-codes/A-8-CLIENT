@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import RequireAuth from '@/components/Shared/RequireAuth';
+import { getAuthToken } from '@/lib/getTokenFromServer';
 
 type Studio = {
   _id: string;
@@ -62,11 +63,22 @@ function EditStudioContent() {
     };
 
     try {
+      const token = await getAuthToken();
+
+      if (!token) {
+        toast.error('Could not get your login token. Please sign in again.');
+        setUpdating(false);
+        return;
+      }
+
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/studios/${id}`,
         {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(updatedStudio),
         },
       );

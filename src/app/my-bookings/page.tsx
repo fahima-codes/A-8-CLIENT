@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { authClient } from '@/lib/auth-client';
+import { getAuthToken } from '@/lib/getTokenFromServer';
 import RequireAuth from '@/components/Shared/RequireAuth';
 
 type Booking = {
@@ -51,14 +52,29 @@ function MyBookingsContent() {
 
   const handleCancel = async () => {
     if (!cancelId) return;
+
+    const token = await getAuthToken();
+
+    if (!token) {
+      toast.error('Could not get your login token. Please sign in again.');
+      return;
+    }
+
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/bookings/${cancelId}`,
-      { method: 'DELETE' },
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     );
     if (res.ok) {
       toast.success('Booking cancelled');
       setBookings(prev => prev.filter(b => b._id !== cancelId));
       setCancelId(null);
+    } else {
+      toast.error('Could not cancel the booking. Please try again.');
     }
   };
 

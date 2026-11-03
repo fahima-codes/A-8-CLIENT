@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { X } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
+import { getAuthToken } from '@/lib/getTokenFromServer';
 
 type Studio = {
   _id: string;
@@ -59,11 +60,22 @@ export default function BookModal({ studio }: { studio: Studio }) {
 
     setSubmitting(true);
     try {
+      const token = await getAuthToken();
+
+      if (!token) {
+        toast.error('Could not get your login token. Please sign in again.');
+        setSubmitting(false);
+        return;
+      }
+
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/bookings`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({
             studioId: studio._id,
             studioTitle: studio.title,
