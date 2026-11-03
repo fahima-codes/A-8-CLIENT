@@ -19,6 +19,14 @@ export const auth = betterAuth({
     requireEmailVerification: false,
   },
 
+  // --- FIX: Account linking enable ---
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ['google', 'email-password'],
+    },
+  },
+
   ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
     ? {
         socialProviders: {

@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StudioSpace - Creative Studio Marketplace
 
-## Getting Started
+A high-performance peer-to-peer marketplace for creators, filmmakers,
+photographers, podcasters, and musicians to discover and book creative spaces.
 
-First, run the development server:
+**Live Site URL:** https://studiospace-live.vercel.app **Client Repo:**
+https://github.com/your-username/assaingment-8-client **Server Repo:**
+https://github.com/your-username/assaingment-8-server
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### ✨ Key Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Dynamic Studio Discovery:** Explore all studios with category filtering
+  (Photo Studio, Film Stage, Podcast Lounge, Music Suite, Workshop), search, and
+  real-time availability with `.limit(6)` featured section on Home.
+- **Secure Auth with BetterAuth:** Email/Password login with strong validation +
+  Google Social Login. JWT stored in HTTPOnly cookies, protected private routes
+  don't redirect on reload.
+- **Complete CRUD & Booking System:** Hosts can Add, Update, Delete their
+  listings with imgbb image upload. Users can book studios with double-booking
+  prevention logic that checks time overlap against Confirmed bookings.
+- **Advanced UI/UX:** Custom 404 page, branded skeleton loaders, empty states
+  with CTA, Sonner toast for all actions (no alert/lorem), theme toggling
+  (light/dark), fully responsive with Swiper.js slider.
+- **Host & Creator Ecosystem:** Wishlist (Save Studios), PDF Invoice for
+  bookings, Dashboard, My Listings, My Bookings with status
+  (Pending/Confirmed/Cancelled), Host Guarantee & How It Works sections.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🛠️ Tech Stack
 
-## Learn More
+| Layer          | Technology                                                              |
+| -------------- | ----------------------------------------------------------------------- |
+| Frontend       | Next.js 15 (App Router), TypeScript, Shadcn UI, Tailwind CSS, Swiper.js |
+| Authentication | BetterAuth, MongoDB Adapter, JWT (HTTPOnly Cookie)                      |
+| Backend        | Express.js, Node.js, MongoDB, Mongoose                                  |
+| Tools          | imgbb API, Sonner Toast, PDF Generator                                  |
 
-To learn more about Next.js, take a look at the following resources:
+### 💻 Local Setup Steps
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Clone Client & Server:**
+   ```bash
+   git clone https://github.com/your-username/assaingment-8-client
+   git clone https://github.com/your-username/assaingment-8-server
+   ```
