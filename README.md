@@ -3,9 +3,7 @@
 A high-performance peer-to-peer marketplace for creators, filmmakers,
 photographers, podcasters, and musicians to discover and book creative spaces.
 
-**Live Site URL:** https://studiospace-live.vercel.app **Client Repo:**
-https://github.com/your-username/assaingment-8-client **Server Repo:**
-https://github.com/your-username/assaingment-8-server
+**Live Site URL:** https://a-8-client-six.vercel.app
 
 ---
 
@@ -40,6 +38,6 @@ https://github.com/your-username/assaingment-8-server
 
 1. **Clone Client & Server:**
    ```bash
-   git clone https://github.com/your-username/assaingment-8-client
-   git clone https://github.com/your-username/assaingment-8-server
+   git clone https://github.com/fahima-codes/A-8-CLIENT
+   git clone https://github.com/fahima-codes/A-8-SERVER
    ```
